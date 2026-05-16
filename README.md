@@ -25,39 +25,99 @@ RegisterNumber:212225230149
 */
 ```
 ```
+# Importing necessary libraries
+import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+from sklearn.metrics import mean_absolute_error, mean_squared_error
+from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 
-# Sample dataset (Study Hours vs Marks)
-X = np.array([1, 2, 3, 4, 5]).reshape(-1, 1)
-Y = np.array([35, 50, 65, 70, 85])
+# Load the dataset
+df = pd.read_csv("student_scores.csv")
 
-# Create model
-model = LinearRegression()
+# Display the first few rows of the dataset
+print("First 5 rows of the dataset:")
+print(df.head())
 
-# Train model
-model.fit(X, Y)
+# Display the last few rows of the dataset
+print("Last 5 rows of the dataset:")
+print(df.tail())
 
-# Predict marks
-Y_pred = model.predict(X)
+# Separate the independent (X) and dependent (Y) variables
+X = df.iloc[:, :-1].values
+Y = df.iloc[:, 1].values
 
-# Display slope and intercept
-print("Slope (m):", model.coef_[0])
-print("Intercept (b):", model.intercept_)
+# Split the dataset into training and testing sets
+X_train, X_test, Y_train, Y_test = train_test_split(
+    X, Y, test_size=1/3, random_state=0
+)
 
-# Plot graph
-plt.scatter(X, Y, color='blue', label='Actual Data')
-plt.plot(X, Y_pred, color='red', label='Regression Line')
-plt.xlabel("Study Hours")
-plt.ylabel("Marks Scored")
-plt.title("Simple Linear Regression - Marks Prediction")
-plt.legend()
+# Create and train the Linear Regression model
+regressor = LinearRegression()
+regressor.fit(X_train, Y_train)
+
+# Predict the test set results
+Y_pred = regressor.predict(X_test)
+
+# Display predicted and actual values
+print("Predicted values:")
+print(Y_pred)
+
+print("Actual values:")
+print(Y_test)
+
+# Plot the Training set results
+plt.scatter(X_train, Y_train, color="red")
+plt.plot(X_train, regressor.predict(X_train), color="blue")
+plt.title("Hours vs Scores (Training Set)")
+plt.xlabel("Hours Studied")
+plt.ylabel("Scores Achieved")
 plt.show()
+
+# Plot the Testing set results
+plt.scatter(X_test, Y_test, color='green')
+plt.plot(X_train, regressor.predict(X_train), color='red')
+plt.title("Hours vs Scores (Testing Set)")
+plt.xlabel("Hours Studied")
+plt.ylabel("Scores Achieved")
+plt.show()
+
+# Calculate error metrics
+mse = mean_squared_error(Y_test, Y_pred)
+mae = mean_absolute_error(Y_test, Y_pred)
+rmse = np.sqrt(mse)
+
+print('Mean Squared Error (MSE) =', mse)
+print('Mean Absolute Error (MAE) =', mae)
+print('Root Mean Squared Error (RMSE) =', rmse)
 ```
 
 ## Output:
-<img width="1105" height="640" alt="image" src="https://github.com/user-attachments/assets/5e470ba5-327b-4d93-abbf-6272b9c66ace" />
+```
+First 5 rows of the dataset:
+   Hours  Scores
+0    2.5      21
+1    5.1      47
+2    3.2      27
+3    8.5      75
+4    3.5      30
+Last 5 rows of the dataset:
+    Hours  Scores
+20    2.7      30
+21    4.8      54
+22    3.8      35
+23    6.9      76
+24    7.8      86
+Predicted values:
+[17.04289179 33.51695377 74.21757747 26.73351648 59.68164043 39.33132858
+ 20.91914167 78.09382734 69.37226512]
+Actual values:
+[20 27 69 30 62 35 24 86 76]
+```
+<img width="1387" height="596" alt="image" src="https://github.com/user-attachments/assets/28583daf-6117-4a96-9449-34f70ddc1871" />
+<img width="1361" height="667" alt="image" src="https://github.com/user-attachments/assets/38393ba4-1d8c-49c0-84ce-6b7306def99c" />
+
 
 
 
